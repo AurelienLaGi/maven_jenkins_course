@@ -45,5 +45,26 @@ pipeline {
             sh "mvn -B -DskipTests clean install"
          }
       }
+      stage ('SonarQube analysis') {
+         steps {
+            withSonarQubeEnv(installationName: 'My local Sonar', credentialsId: '2306bde6-67e3-4161-87f7-6086863aeff7') {
+               sh 'mvn clean sonar:sonar -Dsonar.login=$Login -Dsonar.password=$Password'
+            }
+         }
+      }
+      
+      
+	stage('Code Coverage') {
+        steps {
+            sh 'mvn clean cobertura:cobertura'
+        }
+        
+        post {
+	        always {
+	            step([$class: 'CoberturaPublisher', autoUpdateHealth: true, autoUpdateStability: true, coberturaReportFile: '**/target/site/cobertura/*.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 2, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: true])
+	        }
+	    }
+    }
+
    }
 }

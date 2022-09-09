@@ -48,7 +48,7 @@ pipeline {
       stage ('SonarQube analysis') {
          steps {
             withSonarQubeEnv(installationName: 'My local Sonar', credentialsId: '2306bde6-67e3-4161-87f7-6086863aeff7') {
-               sh 'mvn clean sonar:sonar -Dsonar.login=$Login -Dsonar.password=$Password'
+               sh 'mvn -B -DskipTests clean package sonar:sonar -Dsonar.login=$Login -Dsonar.password=$Password'
             }
          }
       }
